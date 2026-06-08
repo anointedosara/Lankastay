@@ -21,11 +21,54 @@
   --color-footer-bar: #f5f6f8;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   color: var(--color-navy);
   background: #ffffff;
+}
+
+/* ---- Animations ---- */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Every page's main content eases in on load / route change. */
+main {
+  animation: fade-in-up 0.5s ease both;
+}
+
+/* Staggered entrance for nav items and lists. */
+.animate-item {
+  animation: fade-in-up 0.35s ease both;
+}
+
+.animate-fade {
+  animation: fade-in 0.4s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  main,
+  .animate-item,
+  .animate-fade,
+  * {
+    animation: none !important;
+  }
 }
