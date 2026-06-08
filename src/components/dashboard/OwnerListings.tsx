@@ -40,6 +40,7 @@ export default function OwnerListings({ ownerId }: { ownerId: string }) {
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState(EMPTY);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setListings(getOwnerListings(ownerId));
@@ -55,23 +56,52 @@ export default function OwnerListings({ ownerId }: { ownerId: string }) {
     return list;
   }, [listings, query, sort]);
 
-  function readFile(file: File): Promise<string> {
-    return new Promise((resolve) => {
+  // Downscale + compress so images fit inside localStorage's small quota.
+  function resizeImage(file: File, maxDim = 1000, quality = 0.7): Promise<string> {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () => reject(new Error("Could not read the file."));
+      reader.onload = () => {
+        const img = new window.Image();
+        img.onerror = () => reject(new Error("That file isn't a valid image."));
+        img.onload = () => {
+          let { width, height } = img;
+          if (Math.max(width, height) > maxDim) {
+            const scale = maxDim / Math.max(width, height);
+            width = Math.round(width * scale);
+            height = Math.round(height * scale);
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return reject(new Error("Image processing isn't supported here."));
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.src = String(reader.result);
+      };
       reader.readAsDataURL(file);
     });
   }
 
   function pickImage(file: File | undefined) {
     if (!file) return;
-    readFile(file).then((url) => setForm((f) => ({ ...f, image: url })));
+    setError("");
+    resizeImage(file)
+      .then((url) => setForm((f) => ({ ...f, image: url })))
+      .catch((e) => setError(e.message));
   }
 
   async function pickGallery(files: FileList | null) {
     if (!files || files.length === 0) return;
-    const urls = await Promise.all(Array.from(files).map(readFile));
-    setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
+    setError("");
+    try {
+      const urls = await Promise.all(Array.from(files).map((f) => resizeImage(f)));
+      setForm((f) => ({ ...f, gallery: [...f.gallery, ...urls] }));
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not process images.");
+    }
   }
 
   function removeGalleryImage(i: number) {
@@ -100,7 +130,10 @@ export default function OwnerListings({ ownerId }: { ownerId: string }) {
 
   function save(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.image) return;
+    if (!form.image) {
+      setError("Please add a cover picture.");
+      return;
+    }
     const data = {
       kind: form.kind,
       name: form.name,
@@ -110,12 +143,17 @@ export default function OwnerListings({ ownerId }: { ownerId: string }) {
       gallery: form.gallery,
       facilities: form.facilities,
     };
-    if (editingId) updateListing(editingId, data);
-    else addListing({ ownerId, ...data });
-    setListings(getOwnerListings(ownerId));
-    setForm(EMPTY);
-    setEditingId(null);
-    setAdding(false);
+    try {
+      if (editingId) updateListing(editingId, data);
+      else addListing({ ownerId, ...data });
+      setListings(getOwnerListings(ownerId));
+      setForm(EMPTY);
+      setEditingId(null);
+      setAdding(false);
+      setError("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not save the listing.");
+    }
   }
 
   function remove(id: string) {
@@ -251,6 +289,10 @@ export default function OwnerListings({ ownerId }: { ownerId: string }) {
               />
             </label>
           </div>
+
+          {error && (
+            <p className="mt-4 rounded-md bg-danger/10 px-4 py-2 text-sm text-danger">{error}</p>
+          )}
 
           <div className="mt-5 flex items-center gap-4">
             <button type="submit" className="rounded-lg bg-royal px-7 py-2.5 text-sm font-semibold text-white hover:bg-brand">

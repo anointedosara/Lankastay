@@ -63,7 +63,14 @@ function read<T>(key: string, fallback: T): T {
 
 function write(key: string, value: unknown) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(key, JSON.stringify(value));
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Most commonly QuotaExceededError when images are too large.
+    throw new Error(
+      "Storage is full. Try using fewer or smaller images for this listing."
+    );
+  }
 }
 
 function newId() {
