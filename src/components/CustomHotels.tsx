@@ -6,7 +6,7 @@ import { listListings, type Listing } from "@/lib/store";
 
 function Card({ l }: { l: Listing }) {
   return (
-    <Link href={`/listing/${l.id}`} className="group block">
+    <Link href={`/listing/${l.slug}`} className="group block">
       <div className="relative aspect-4/3 overflow-hidden rounded-2xl">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -51,7 +51,7 @@ export function CustomHotelsSection() {
   return (
     <section className="pb-16">
       <h2 className="mb-6 text-xl font-semibold text-navy">Newly Listed by Owners</h2>
-      <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-6 min-[500px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
         {listings.map((l) => (
           <Card key={l.id} l={l} />
         ))}

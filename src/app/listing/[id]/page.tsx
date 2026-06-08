@@ -60,8 +60,8 @@ export default function ListingDetailPage() {
 
       <main className="mx-auto max-w-6xl px-6">
         {/* Title + breadcrumb */}
-        <section className="relative py-10 text-center">
-          <nav className="absolute left-0 top-10 text-sm text-muted">
+        <section className="relative py-10 sm:text-center">
+          <nav className="mb-4 text-sm text-muted sm:absolute sm:left-0 sm:top-10 sm:mb-0">
             <Link href="/" className="transition-colors hover:text-brand">Home</Link>
             <span className="mx-2">/</span>
             <span className="font-medium text-navy">Hotel Details</span>

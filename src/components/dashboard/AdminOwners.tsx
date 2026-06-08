@@ -203,7 +203,7 @@ export default function AdminOwners({ initial }: { initial: Owner[] }) {
       </section>
 
       {/* Pagination */}
-      <div className="mt-6 flex items-center justify-center gap-6 text-sm text-muted">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-sm text-muted">
         <span className="flex items-center gap-2">
           Items per page:
           <span className="relative inline-flex items-center gap-1 text-navy">

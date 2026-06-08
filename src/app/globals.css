@@ -21,6 +21,10 @@
   --color-footer-bar: #f5f6f8;
 }
 
+html {
+  scroll-behavior: auto;
+}
+
 body {
   color: var(--color-navy);
   background: #ffffff;

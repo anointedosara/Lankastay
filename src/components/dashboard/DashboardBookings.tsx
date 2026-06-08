@@ -97,14 +97,14 @@ export default function DashboardBookings({
       <h2 className="text-xl font-bold text-brand">Your Bookings</h2>
 
       {/* Search + sort */}
-      <div className="mt-5 flex items-center gap-4">
-        <div className="flex flex-1 items-center gap-3 rounded-full bg-white px-5 py-3 shadow-sm">
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <div className="flex min-w-45 flex-1 items-center gap-3 rounded-full bg-white px-5 py-3 shadow-sm">
           <SearchIcon />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search documents"
-            className="w-full bg-transparent text-sm text-navy outline-none placeholder:text-muted"
+            className="w-full min-w-0 bg-transparent text-sm text-navy outline-none placeholder:text-muted"
           />
         </div>
         <Dropdown value={sort} options={SORT_OPTIONS} onChange={setSort} align="right" />

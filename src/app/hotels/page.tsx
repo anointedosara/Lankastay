@@ -100,7 +100,7 @@ export default async function HotelsPage({
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 min-[500px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
             {!hasFilters && <CustomHotelCards />}
             {results.map((hotel) => (
               <HotelGridCard key={hotel.slug} hotel={hotel} />

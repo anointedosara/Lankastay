@@ -198,8 +198,8 @@ export function updateListing(id: string, patch: Partial<Listing>): Listing | nu
   return updated;
 }
 
-export function getListing(id: string): Listing | undefined {
-  return listListings().find((l) => l.id === id);
+export function getListing(idOrSlug: string): Listing | undefined {
+  return listListings().find((l) => l.id === idOrSlug || l.slug === idOrSlug);
 }
 
 export function removeListing(id: string) {
